@@ -57,7 +57,18 @@ def run(input_folder, output_folder):
             direction + x['account']: abs(x['amount'])
         })
 
-    pd.DataFrame(lines).to_csv(os.path.join(output_folder, 'accounting.csv'), index=False)
+    columns_order = ['data', 'categoria', 'sottocategoria', 'esecutore', 'causale',
+                     'Entrate Stripe', 'Uscite Stripe', 'Entrate PayPal', 'Uscite PayPal', 'Entrate ClubCollect',
+                     'Uscite ClubCollect', 'Entrate c/c Volt italia',
+                     'Uscite c/c Volt italia', 'Entrate c/c Lazio', 'Uscite c/c Lazio', 'Entrate c/c Molise',
+                     'Uscite c/c Molise', 'Entrate c/c Piemonte', 'Uscite c/c Piemonte', 'Entrate c/c Lombardia',
+                     'Uscite c/c Lombardia', 'Entrate c/c Emilia romagna', 'Uscite c/c Emilia romagna',
+                     'Entrate c/c Toscana', 'Uscite c/c Toscana', 'Entrate Carta grm', 'Uscite Carta grm',
+                     'Entrate Carta lisena', 'Uscite Carta lisena']
+    for x in columns_order:
+        if x not in lines:
+            lines[0][x] = ''
+    pd.DataFrame(lines).to_csv(os.path.join(output_folder, 'accounting.csv'), columns=columns_order, index=False)
 
 
 parser = argparse.ArgumentParser(

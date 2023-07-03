@@ -7,7 +7,8 @@ def process(input_file, account_name):
     df = pd.read_csv(input_file).fillna('')
     records = []
 
-    for i, x in df[df['Status'] == 'Paid'].iterrows():
+    to_process = df[df['Status'] == 'Paid'] if 'Status' in df else df[df['Type'] == 'charge']
+    for i, x in to_process.iterrows():
         date = x['Created (UTC)'].split(' ')[0]
         date = '-'.join(reversed(date.split('/')))
 
