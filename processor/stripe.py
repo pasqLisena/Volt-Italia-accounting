@@ -12,7 +12,7 @@ def process(input_file, account_name):
         date = x['Created (UTC)'].split(' ')[0]
         date = '-'.join(reversed(date.split('/')))
 
-        actor = 'Stripe Technology Europe Ltd'
+        actor = x['Nome (metadata)'] or x['Customer Email']
         amount = to_number(x['Amount'])
         category = 'Donazioni liberali'
         subcategory = 'Persone fisiche'
@@ -43,7 +43,7 @@ def process(input_file, account_name):
         })
 
         # add the applied fee as a separate payment
-        actor = 'Stripe'
+        actor = 'Stripe Technology Europe Ltd'
         amount = - to_number(x['Fee'])
         category = 'Servizi'
         subcategory = 'Commissione sistemi di pagamento'

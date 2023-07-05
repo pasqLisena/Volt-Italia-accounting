@@ -16,7 +16,7 @@ def process(input_file, account_name):
         amount = x['Amount Paid']
 
         records.append({
-            'date': date,
+            'date': date.replace('/', '-'),
             'category': category,
             'subcategory': subcategory,
             'actor': actor,

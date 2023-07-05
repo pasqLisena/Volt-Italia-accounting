@@ -24,7 +24,7 @@ def process(input_file, account_name):
             amount = x.get('Addebiti')
             if not amount.startswith('-'):
                 # for the cards the outcomes are positive!
-                amount = '-'+ amount
+                amount = '-' + amount
         amount = to_number(amount)
 
         category = ''
@@ -55,10 +55,10 @@ def process(input_file, account_name):
         elif actor == 'Stripe Technology Europe Ltd':
             category = 'Giroconti'
             subcategory = 'Sistemi di pagamento'
-        elif actor in ['VODAFONE ITALIA S P A', 'AMAZON WEB SERVICES EMEA SARL']:
+        elif any(['VODAFONE ITALIA S P A' in descr, 'AMAZON WEB SERVICES EMEA SARL' in descr]):
             category = 'Servizi'
             subcategory = 'Costi IT e Telefonia'
-        elif actor == 'World Services Information SAS':
+        elif 'World Services Information SAS' in descr:
             category = 'Servizi'
             subcategory = 'Domiciliazione Legale'
         elif note.lower() in ['canone mensile base e servizi aggiuntivi', 'commissioni e spese adue',
