@@ -1,0 +1,12 @@
+presidents:
+  - Gianluca Guerra
+  - Eliana Canavesio
+  - Guido Silvestri
+  - Daniela Patti
+membership_fees:
+  - 20
+  - 30
+assembly_ticket_fees:
+  - 20
+  - 30
+  - 45

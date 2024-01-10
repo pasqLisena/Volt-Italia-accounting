@@ -11,7 +11,7 @@ REGEX_BONIFICO_USCITA = r'(?:Addebito Diretto |Bonifico (?:Istantaneo )?)Dispost
 
 
 def run(input_folder, output_folder):
-    records = []
+    records = pd.read_csv(os.path.join(input_folder, 'other.csv')).to_dict('records')
 
     print('Processing Bank Accounts:')
     for x in os.listdir(os.path.join(input_folder, CONTI_ROOT)):
@@ -34,6 +34,8 @@ def run(input_folder, output_folder):
 
     print('Processing ClubCollect')
     res = clubcollect.process(os.path.join(input_folder, 'club-collect.xlsx'), 'ClubCollect')
+    records.extend(res)
+    res = clubcollect.process_charges(os.path.join(input_folder, 'club-collect-charges.xlsx'), 'ClubCollect')
     records.extend(res)
 
     records.sort(key=lambda r: r['date'])
@@ -58,17 +60,24 @@ def run(input_folder, output_folder):
         })
 
     columns_order = ['data', 'categoria', 'sottocategoria', 'esecutore', 'causale',
-                     'Entrate Stripe', 'Uscite Stripe', 'Entrate PayPal', 'Uscite PayPal', 'Entrate ClubCollect',
+                     'Entrate Cassa Contanti', 'Uscite Cassa Contanti', 'Entrate Stripe', 'Uscite Stripe', 'Entrate PayPal', 'Uscite PayPal', 'Entrate ClubCollect',
                      'Uscite ClubCollect', 'Entrate c/c Volt italia',
                      'Uscite c/c Volt italia', 'Entrate c/c Lazio', 'Uscite c/c Lazio', 'Entrate c/c Molise',
                      'Uscite c/c Molise', 'Entrate c/c Piemonte', 'Uscite c/c Piemonte', 'Entrate c/c Lombardia',
                      'Uscite c/c Lombardia', 'Entrate c/c Emilia romagna', 'Uscite c/c Emilia romagna',
                      'Entrate c/c Toscana', 'Uscite c/c Toscana', 'Entrate Carta grm', 'Uscite Carta grm',
                      'Entrate Carta lisena', 'Uscite Carta lisena']
+
     for x in columns_order:
-        if x not in lines:
+        if x not in lines[0]:
             lines[0][x] = ''
-    pd.DataFrame(lines).to_csv(os.path.join(output_folder, 'accounting.csv'), columns=columns_order, index=False)
+    final_table = pd.DataFrame(lines)
+
+    # merge internal movements
+    # final_table = final_table.groupby(['data', 'categoria', 'sottocategoria', 'esecutore', 'causale']).sum(min_count=1).reset_index()
+    # final_table.sort_values(by=['data', 'causale'],inplace=True)
+
+    final_table.to_csv(os.path.join(output_folder, 'accounting.csv'), columns=columns_order, index=False)
 
 
 parser = argparse.ArgumentParser(

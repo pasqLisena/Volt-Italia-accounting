@@ -1,6 +1,6 @@
 import re
 import pandas as pd
-from .utils import to_number, is_tesseramento, is_donazione, PRESIDENTS
+from .utils import to_number, is_tesseramento, is_donation, PRESIDENTS
 
 REGEX_BONIFICO_ENTRATA = r'(?i)Bonifico (?:Istantaneo )?(?:A Vostro Favore )?Disposto Da:? (?:MITT\.: )(.+)(?: BENEF\.:.+)'
 REGEX_BONIFICO_USCITA = r'(?i)(?:Addebito Diretto |Bonifico (?:Istantaneo )?)(?:Da Voi )Disposto A Favore Di:? ?(.+)'
@@ -81,7 +81,7 @@ def process(input_file, account_name):
             category = 'Rimborsi spese'
             if actor in PRESIDENTS:
                 subcategory = 'Presidenti'
-        elif is_donazione(descr):
+        elif is_donation(descr):
             category = 'Donazioni liberali'
 
         records.append({
@@ -95,4 +95,18 @@ def process(input_file, account_name):
             'amount': amount,
             'account': account_name
         })
+
+        if actor == 'Stripe Technology Europe Ltd':
+            records.append({
+                'date': date,
+                'category': category,
+                'subcategory': subcategory,
+                'actor': actor,
+                'original_category': x['Descrizione'],
+                'original_note': descr,
+                'original_detail': '',
+                'amount': -amount,
+                'account': 'Stripe'
+            })
+
     return records

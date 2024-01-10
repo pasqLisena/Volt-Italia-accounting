@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .utils import to_number, is_tesseramento
+from .utils import to_number, is_tesseramento, match_membership_fee, PRESIDENTS
 
 
 def process(input_file, account_name):
@@ -15,15 +15,18 @@ def process(input_file, account_name):
         category = ''
         subcategory = ''
 
-        if is_tesseramento(x, 'Messaggio', 'Lordo') or amount == 30.00 or amount == 20.00:
+        if is_tesseramento(x, 'Messaggio', 'Lordo'):
             category = 'Tesseramento'
             subcategory = 'Quote associative'
+        elif match_membership_fee(amount):
+            category = 'Tesseramento'
+            subcategory = 'Quote associative (Controlla)'
         elif amount > 0:
             category = 'Donazioni liberali'
             subcategory = 'Persone fisiche (ricorrenti)' if x['Tipo'] == 'Pagamento abbonamento' else 'Persone fisiche'
         elif 'rimborso spese' in x['Messaggio'].lower():
             category = 'Rimborsi spese'
-            if actor in ['Eliana Canavesio', 'Gianluca Guerra']:
+            if actor in PRESIDENTS:
                 subcategory = 'Presidenti'
 
         records.append({
