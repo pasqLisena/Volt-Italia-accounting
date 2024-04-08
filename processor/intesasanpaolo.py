@@ -10,26 +10,51 @@ def process(input_file, account_name):
     h = 29 if account_name.startswith('Carta') else 27
     df = pd.read_excel(input_file, header=h, dtype=str)
 
+    starting_balance = 0
+    ending_balance = 0
     records = []
     for i, x in df.iterrows():
         date = x['Data contabile']
-        if pd.isna(date):
-            continue
-
-        date = '-'.join(reversed(str(date).split(' ')[0].split('/')))
-
-        actor = ''
+        note = x.get('Descrizione')
         amount = x.get('Accrediti')
         if not amount or pd.isna(amount):
             amount = x.get('Addebiti')
-            if not amount.startswith('-'):
+            if not str(amount).startswith('-'):
                 # for the cards the outcomes are positive!
-                amount = '-' + amount
-        amount = to_number(amount)
+                amount = '-' + str(amount)
+        try:
+            amount = to_number(amount)
+        except:
+            continue
+
+        if pd.isna(date):
+            if note == 'Saldo contabile iniziale in Euro':
+                starting_balance = amount
+                records.append({
+                    'date': '-1',
+                    'category': '********',
+                    'subcategory': "SALDO INIZIALE",
+                    'amount': starting_balance,
+                    'account': account_name
+                })
+
+            elif note == 'Saldo contabile finale in Euro':
+                ending_balance = amount
+                records.append({
+                    'date': '2028',
+                    'category': '********',
+                    'subcategory': "SALDO FINALE",
+                    'amount': ending_balance,
+                    'account': account_name
+                })
+            print(amount)
+            continue
+        date = '-'.join(reversed(str(date).split(' ')[0].split('/')))
+
+        actor = ''
 
         category = ''
         subcategory = ''
-        note = x.get('Descrizione')
         descr = x.get('Descrizione estesa')
         if not descr or pd.isna(descr):
             if not pd.isna(note):

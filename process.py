@@ -52,7 +52,7 @@ def run(input_folder, output_folder):
 
         lines.append({
             'data': x['date'],
-            'esecutore': x['actor'],
+            'esecutore': x.get('actor'),
             'causale': x.get('original_note', x.get('original_detail', x.get('original_category'))),
             'categoria': x['category'],
             'sottocategoria': x['subcategory'],
@@ -60,7 +60,8 @@ def run(input_folder, output_folder):
         })
 
     columns_order = ['data', 'categoria', 'sottocategoria', 'esecutore', 'causale',
-                     'Entrate Cassa Contanti', 'Uscite Cassa Contanti', 'Entrate Stripe', 'Uscite Stripe', 'Entrate PayPal', 'Uscite PayPal', 'Entrate ClubCollect',
+                     'Entrate Cassa Contanti', 'Uscite Cassa Contanti', 'Entrate Stripe', 'Uscite Stripe',
+                     'Entrate PayPal', 'Uscite PayPal', 'Entrate ClubCollect',
                      'Uscite ClubCollect', 'Entrate c/c Volt italia',
                      'Uscite c/c Volt italia', 'Entrate c/c Lazio', 'Uscite c/c Lazio', 'Entrate c/c Molise',
                      'Uscite c/c Molise', 'Entrate c/c Piemonte', 'Uscite c/c Piemonte', 'Entrate c/c Lombardia',
@@ -73,12 +74,16 @@ def run(input_folder, output_folder):
             lines[0][x] = ''
     final_table = pd.DataFrame(lines)
 
+
+    balance_rows = final_table[final_table['categoria'] == '********']
+    balance_rows_merged = balance_rows.groupby('sottocategoria', as_index=False).last()
+    final_table.drop(balance_rows.index, inplace=True)
+    # final_table = pd.concat([final_table, balance_rows_merged], ignore_index=True)
     # merge internal movements
     # final_table = final_table.groupby(['data', 'categoria', 'sottocategoria', 'esecutore', 'causale']).sum(min_count=1).reset_index()
-    # final_table.sort_values(by=['data', 'causale'],inplace=True)
 
     final_table.to_csv(os.path.join(output_folder, 'accounting.csv'), columns=columns_order, index=False)
-
+    balance_rows_merged.to_csv(os.path.join(output_folder, 'balance.csv'), columns=columns_order, index=False)
 
 parser = argparse.ArgumentParser(
     prog='Volt Italia accounting',
