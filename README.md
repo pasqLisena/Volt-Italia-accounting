@@ -29,6 +29,7 @@ Run the following
     
     python process.py [-i input_path] [-o output_path]
 
+
 E.g.
 
     python process.py -i ./input/ -o ./output/

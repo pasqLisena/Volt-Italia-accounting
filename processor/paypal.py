@@ -2,22 +2,40 @@ import pandas as pd
 
 from .utils import to_number, is_tesseramento, match_membership_fee, PRESIDENTS
 
+LORDO = 'Lordo'
 
 def process(input_file, account_name):
     df = pd.read_csv(input_file).fillna('')
 
     records = []
     for i, x in df.iterrows():
-        date = '-'.join(reversed(x['Data'].split('/')))
+        if x['Tipo'] == 'Conversione di valuta generica':
+            continue
 
         actor = x['Nome']
-        amount = to_number(x['Lordo'])
+
+        if actor == '2Checkout.com, Inc.': # Workaround because this payment appears multiple times
+            continue
+
+        if x['Oggetto'] == 'portermetrics.com (Renewal)':
+            actor = 'portermetrics.com'
+
+        date = '-'.join(reversed(x['Data'].split('/')))
+
+        amount = to_number(x[LORDO])
         category = ''
         subcategory = ''
 
-        if is_tesseramento(x, 'Messaggio', 'Lordo'):
+        if is_tesseramento(x, 'Messaggio', LORDO):
             category = 'Tesseramento'
             subcategory = 'Quote associative'
+        elif x['Oggetto'] == 'portermetrics.com (Renewal)':
+            actor = 'portermetrics.com'
+            category = 'Servizi'
+            subcategory = 'Spese per Comunicazione (Sponsorizzazioni/servizi/tool)'
+        elif actor == 'Meta Platforms, Inc.':
+            category = 'Servizi'
+            subcategory = 'Spese per Comunicazione (Sponsorizzazioni/servizi/tool)'
         elif match_membership_fee(amount):
             category = 'Tesseramento'
             subcategory = 'Quote associative (Controlla)'

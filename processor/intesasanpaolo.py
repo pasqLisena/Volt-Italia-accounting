@@ -77,7 +77,7 @@ def process(input_file, account_name):
             actor = 'Facebook'
             category = 'Servizi'
             subcategory = 'Spese per Comunicazione (Sponsorizzazioni/servizi/tool)'
-        elif actor == 'Stripe Technology Europe Ltd':
+        elif actor == 'Stripe Technology Europe Ltd' or 'Club Collect' in descr:
             category = 'Giroconti'
             subcategory = 'Sistemi di pagamento'
         elif any(['VODAFONE ITALIA S P A' in descr, 'AMAZON WEB SERVICES EMEA SARL' in descr]):
@@ -132,6 +132,19 @@ def process(input_file, account_name):
                 'original_detail': '',
                 'amount': -amount,
                 'account': 'Stripe'
+            })
+
+        if 'ClubCollect' in descr :
+            records.append({
+                'date': date,
+                'category': category,
+                'subcategory': subcategory,
+                'actor': actor,
+                'original_category': x['Descrizione'],
+                'original_note': descr,
+                'original_detail': '',
+                'amount': -amount,
+                'account': 'Club Collect'
             })
 
     return records

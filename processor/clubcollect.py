@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def process(input_file, account_name):
     df = pd.read_excel(input_file).fillna('')
     records = []
@@ -28,11 +29,12 @@ def process(input_file, account_name):
 
     return records
 
+
 def process_charges(input_file, account_name):
     df = pd.read_excel(input_file).fillna('')
     records = []
     for i, x in df.iterrows():
-        date = x.get('Validated On')
+        date = x.get('Inserted On', x.get('Validated On'))
 
         actor = 'ClubCollect'
         category = 'Servizi'
