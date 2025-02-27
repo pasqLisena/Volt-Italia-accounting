@@ -45,7 +45,10 @@ def process(input_file, account_name):
         elif 'rimborso spese' in x['Messaggio'].lower():
             category = 'Rimborsi spese'
             if actor in PRESIDENTS:
-                subcategory = 'Presidenti'
+                subcategory = 'Rimborsi spese Presidenti'
+
+        actor = actor + ' ' + x['Indirizzo email mittente']
+
 
         records.append({
             'date': date,

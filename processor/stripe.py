@@ -21,7 +21,7 @@ def process(input_file, account_name, lunda_file):
 
         is_recurring = False
 
-        actor = f"{x['Nome (metadata)']} <{x['Customer Email']}>"
+        actor = f"{x['Nome (metadata)'] or x['Card Name']} <{x['Customer Email']}>"
         descr = str(x['Description'])
         if not actor:
             y = lunda[lunda['cause_stripe_account_payment_id'] == x['id']].iloc[0]
