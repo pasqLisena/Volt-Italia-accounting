@@ -29,7 +29,7 @@ def run(input_folder, output_folder):
     records.extend(res)
 
     print('Processing Stripe')
-    res = stripe.process(os.path.join(input_folder, 'stripe.csv'), 'Stripe')
+    res = stripe.process(os.path.join(input_folder, 'stripe.csv'), 'Stripe', os.path.join(input_folder, 'lunda.csv'))
     records.extend(res)
 
     print('Processing ClubCollect')
@@ -62,11 +62,10 @@ def run(input_folder, output_folder):
     columns_order = ['data', 'categoria', 'sottocategoria', 'esecutore', 'causale',
                      'Entrate Cassa Contanti', 'Uscite Cassa Contanti', 'Entrate Stripe', 'Uscite Stripe',
                      'Entrate PayPal', 'Uscite PayPal', 'Entrate ClubCollect',
-                     'Uscite ClubCollect', 'Entrate c/c Volt italia',
-                     'Uscite c/c Volt italia', 'Entrate c/c Lazio', 'Uscite c/c Lazio', 'Entrate c/c Basilicata',
-                     'Uscite c/c Basilicata', 'Entrate c/c Piemonte', 'Uscite c/c Piemonte', 'Entrate c/c Lombardia',
-                     'Uscite c/c Lombardia', 'Entrate c/c Emilia romagna', 'Uscite c/c Emilia romagna',
-                     'Entrate c/c Toscana', 'Uscite c/c Toscana',
+                     'Uscite ClubCollect',
+                     'Entrate c/c Volt italia', 'Uscite c/c Volt italia',
+                     'Entrate c/c Basilicata', 'Uscite c/c Basilicata',
+                     'Entrate c/c Emilia romagna', 'Uscite c/c Emilia romagna',
                      'Entrate Carta lisena', 'Uscite Carta lisena']
 
     for x in columns_order:

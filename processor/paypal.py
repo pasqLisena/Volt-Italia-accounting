@@ -17,8 +17,6 @@ def process(input_file, account_name):
         if actor == '2Checkout.com, Inc.': # Workaround because this payment appears multiple times
             continue
 
-        if x['Oggetto'] == 'portermetrics.com (Renewal)':
-            actor = 'portermetrics.com'
 
         date = '-'.join(reversed(x['Data'].split('/')))
 
@@ -29,7 +27,9 @@ def process(input_file, account_name):
         if is_tesseramento(x, 'Messaggio', LORDO):
             category = 'Tesseramento'
             subcategory = 'Quote associative'
-        elif x['Oggetto'] == 'portermetrics.com (Renewal)':
+        elif 'portermetrics.com' in x['Oggetto']:
+            if amount > 0:
+                continue
             actor = 'portermetrics.com'
             category = 'Servizi'
             subcategory = 'Spese per Comunicazione (Sponsorizzazioni/servizi/tool)'

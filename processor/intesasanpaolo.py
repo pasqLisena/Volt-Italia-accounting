@@ -47,7 +47,6 @@ def process(input_file, account_name):
                     'amount': ending_balance,
                     'account': account_name
                 })
-            print(amount)
             continue
         date = '-'.join(reversed(str(date).split(' ')[0].split('/')))
 
@@ -77,7 +76,7 @@ def process(input_file, account_name):
             actor = 'Facebook'
             category = 'Servizi'
             subcategory = 'Spese per Comunicazione (Sponsorizzazioni/servizi/tool)'
-        elif actor == 'Stripe Technology Europe Ltd' or 'Club Collect' in descr:
+        elif 'stripe' in actor.lower() or 'club collect' in descr.lower() or 'clubcollect' in descr.lower() or 'membership fees' in descr.lower():
             category = 'Giroconti'
             subcategory = 'Sistemi di pagamento'
         elif any(['VODAFONE ITALIA S P A' in descr, 'AMAZON WEB SERVICES EMEA SARL' in descr]):
@@ -121,7 +120,7 @@ def process(input_file, account_name):
             'account': account_name
         })
 
-        if actor == 'Stripe Technology Europe Ltd':
+        if 'stripe' in actor.lower():
             records.append({
                 'date': date,
                 'category': category,
@@ -134,17 +133,17 @@ def process(input_file, account_name):
                 'account': 'Stripe'
             })
 
-        if 'ClubCollect' in descr :
+        if 'club collect' in descr.lower() or 'clubcollect' in descr.lower() or 'membership fees' in descr.lower():
             records.append({
                 'date': date,
                 'category': category,
                 'subcategory': subcategory,
                 'actor': actor,
                 'original_category': x['Descrizione'],
-                'original_note': descr,
+                'original_note': 'Trasferimento da ClubCollect a Volt Italia',
                 'original_detail': '',
                 'amount': -amount,
-                'account': 'Club Collect'
+                'account': 'ClubCollect'
             })
 
     return records
